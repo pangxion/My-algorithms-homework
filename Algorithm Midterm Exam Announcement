@@ -1,0 +1,175 @@
+import math
+from collections import deque
+
+# Question 1: Sorting (Bubble Sort)
+# 要求：實作 bubble_sort(arr) 並回傳結果。測試 [5, 1, 4, 2, 8]
+
+def bubble_sort(arr):
+    n = len(arr)
+    # 複製一份清單，確保不更動原始輸入資料 (符合標準解答做法)
+    res = arr[:]
+    print(f"Sorting process for {res}:")
+    for i in range(n):
+        swapped = False
+        for j in range(0, n - i - 1):
+            if res[j] > res[j + 1]:
+                res[j], res[j + 1] = res[j + 1], res[j]
+                swapped = True
+        # 顯示每一輪排序後的樣子，證明程式真的在跑
+        print(f"  Pass {i + 1}: {res}")
+        if not swapped: break
+    return res
+
+# Question 2: Recurrence (Recursive Thinking)
+# 要求：遞迴實作 factorial(n)，計算 5!
+
+def factorial(n):
+    if n == 0 or n == 1:
+        return 1
+    # 遞迴呼叫：n * (n-1)!
+    return n * factorial(n - 1)
+
+# Question 3: Greedy and DP (Coin Change)
+# 要求：面額 [1, 5, 10, 25]，湊 63 元。硬幣由大到小排序。
+
+def min_coins(amount):
+    coins = [25, 10, 5, 1]
+    used_coins = []
+    target = amount
+    
+    print(f"  [推導過程] 開始計算目標金額: {target}")
+    for coin in coins:
+        # 當前金額還夠扣這個硬幣時，就一直扣
+        while target >= coin:
+            print(f"    -> 目標 {target} >= 面額 {coin}，使用一枚 {coin} 元。")
+            target -= coin
+            used_coins.append(coin)
+            print(f"       剩餘需湊金額: {target}")
+            
+    # 回傳總數與使用的清單
+    return len(used_coins), used_coins
+
+# Question 4: Tree Construction and Search (DFS)
+# 要求：定義 TreeNode 並建構樹狀圖，使用 DFS 尋找數值 7
+
+class TreeNode:
+    def __init__(self, val):
+        self.val = val
+        self.left = None
+        self.right = None
+
+def dfs_search(node, target):
+    if node is None:
+        return False
+    # 顯示搜尋路徑證明真的有走過節點
+    print(f"  Searching node: {node.val}")
+    if node.val == target:
+        return True
+    # 遞迴搜尋左子樹與右子樹
+    return dfs_search(node.left, target) or dfs_search(node.right, target)
+
+# Question 5: Stack and Queue
+# 要求：模擬 Stack (push, pop) 與 Queue (enqueue, dequeue)
+
+def simulate_stack_and_queue():
+    # Stack: LIFO (Last In First Out)
+    stack = []
+    stack.append(10)
+    stack.append(20)
+    stack.pop()
+    stack.append(30)
+    
+    # Queue: FIFO (First In First Out)
+    queue = deque()
+    queue.append(10)
+    queue.append(20)
+    queue.popleft()
+    queue.append(30)
+    
+    return stack, list(queue)
+
+# Question 6: Linked List
+# 要求：1 -> 2 -> 3 -> 4，走訪並印出，空格分隔
+
+class ListNode:
+    def __init__(self, val):
+        self.val = val
+        self.next = None
+
+def print_linked_list():
+    head = ListNode(1)
+    head.next = ListNode(2)
+    head.next.next = ListNode(3)
+    head.next.next.next = ListNode(4)
+    
+    curr = head
+    while curr:
+        print(curr.val, end=" " if curr.next else "")
+        curr = curr.next
+    print() # 換行
+
+# Question 7: Nearest Neighbor Classifier (L1 & L2 Distance)
+# 要求：計算 P(3,2) 到 A(1,1), B(4,4), C(6,1) 的 L1 與 L2 距離並找最近鄰居
+
+def knn_analysis():
+    A, B, C = (1, 1), (4, 4), (6, 1)
+    P = (3, 2)
+    
+    def l1(p, q): return abs(p[0] - q[0]) + abs(p[1] - q[1])
+    def l2(p, q): return math.sqrt((p[0] - q[0])**2 + (p[1] - q[1])**2)
+    
+    # 分別計算所有點到 P 的距離 (這是你強調要增加的部分)
+    points = {'A': A, 'B': B, 'C': C}
+    l1_results = {name: l1(coord, P) for name, coord in points.items()}
+    l2_results = {name: l2(coord, P) for name, coord in points.items()}
+    
+    print("  Distances from P(3,2):")
+    for name in ['A', 'B', 'C']:
+        print(f"    Point {name}: L1={l1_results[name]}, L2={l2_results[name]:.2f}")
+    
+    # 找出最近的點
+    nearest_l1 = min(l1_results, key=l1_results.get)
+    nearest_l2 = min(l2_results, key=l2_results.get)
+    
+    if nearest_l1 == nearest_l2:
+        return f"Nearest under both L1 and L2: {nearest_l1}"
+    return f"L1 nearest: {nearest_l1}, L2 nearest: {nearest_l2}"
+
+# 執行與結果列印 (完全對照考卷 Expected Result 格式)
+
+if __name__ == "__main__":
+    print("Question 1. Sorting")
+    print(f"Expected Result: [1, 2, 4, 5, 8]")
+    print(f"Actual Result: {bubble_sort([5, 1, 4, 2, 8])}\n")
+
+    print("Question 2. Recurrence")
+    print(f"Expected Result: 120")
+    print(f"Actual Result: {factorial(5)}\n")
+
+    print("Question 3. Greedy")
+    print(f"Expected Result: 6 coins; [25, 25, 10, 1, 1, 1]")
+    count, coins = min_coins(63)
+    print(f"Actual Result: {count} coins; {coins}\n")
+
+    print("Question 4. Tree Construction and Search")
+    root = TreeNode(5)
+    root.left, root.right = TreeNode(3), TreeNode(8)
+    root.left.left, root.left.right = TreeNode(2), TreeNode(4)
+    root.right.right = TreeNode(7)
+    print(f"Expected Result: Found")
+    print(f"Actual Result: {'Found' if dfs_search(root, 7) else 'Not Found'}\n")
+
+    print("Question 5. Stack and Queue")
+    print(f"Expected Result: Stack: [10, 30]; Queue: [20, 30]")
+    s, q = simulate_stack_and_queue()
+    print(f"Actual Result: Stack: {s}; Queue: {q}\n")
+
+    print("Question 6. Linked List")
+    print(f"Expected Result: 1 2 3 4")
+    print("Actual Result: ", end="")
+    print_linked_list()
+    print()
+
+    print("Question 7. Nearest Neighbor")
+    print(f"Expected Result: Nearest under both L1 and L2: A")
+    print(f"Actual Result: {knn_analysis()}")
